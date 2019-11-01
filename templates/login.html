@@ -1,0 +1,17 @@
+{% extends "default.html" %}
+{% block title %}{% endblock %}
+
+{% block content %}
+<form method="POST" action="/submit">
+    <fieldset>
+        <legend>Skrá inn</legend>
+        <label>Notendanafn:<br>
+            <input type="text" name="username" required placeholder="notendanafn">
+        </label>
+        <label>Lykilorð:<br>
+            <input type="password" name="password" required>
+        </label>
+        <input type="submit" value="Login">
+    </fieldset>
+</form>
+{% endblock %}
