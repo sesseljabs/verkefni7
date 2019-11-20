@@ -16,11 +16,24 @@ with connection.cursor() as cursor:
     connection.commit()
     #connection.close()
         
+def logins(values):
+    values1 = values
+    if "loggedin" in session:
+        return f"""
+            <h2>Þú ert skráð/ur inn, {session["loggedin"]}</h2>
+        """
+    else:
+        return f"""
+            <a href="/login">Skrá inn</a>
+            <a href="/signup">Nýskráning</a>
+        """
+
+app.jinja_env.filters['logins'] = logins
 
 @app.route("/")
 def index():
     # user_id = request.cookies.get("uid")
-    return render_template("index.html")
+    return render_template("index.html",session=session)
 
 @app.route("/login")
 def login():
@@ -28,6 +41,8 @@ def login():
 
 @app.route("/submit", methods=["POST"])
 def submit():
+    if "loggedin" in session:
+        return redirect("/")
     if request.method == "POST":
         values = {
             "username":request.form["username"],
@@ -43,15 +58,16 @@ def submit():
             user = cursor.fetchone()
         except Exception as e:
             print(e)
-            return f"login error i guess, {e}"
+            return render_template("pagenotfound.html")
 
     login = user["boolval"]
     if login == 0:
-        return "passwd eða lykilorð rangt"
+        return render_template("custom.html", content="Notendanafn eða lykilorð rangt")
     elif login == 1:
-        return f"logged in, {values['username']}"
+        session["loggedin"] = values['username']
+        return redirect("/")
     else:
-        return "sql error"
+        return render_template("pagenotfound.html")
 
 
 @app.route("/signup")
@@ -72,10 +88,24 @@ def subsignup():
         cursor.execute(sql)
         userlist = cursor.fetchall()
         for i in userlist:
-            pass
+            if i["user_name"] == sup["username"]:
+                return render_template("signup.html", error="Þetta notendanafn er nú þegar í notkun")
+            elif i["user_email"] == sup["email"]:
+                return render_template("signup.html", error="Þetta netfang er nú þegar í notkun")
+        else:
+            skrainn = f"insert into users values ('{sup['username']}', '{sup['email']}', '{sup['password']}')"
+            cursor.execute(skrainn)
+            connection.commit()
 
-    return "lol meme gif"
+    return render_template("custom.html", content=f"Skráður, {sup['username']}!")
             
+@app.route("/utskra")
+def utskra():
+    if "loggedin" in session:
+        session.pop("loggedin")
+        return render_template("custom.html", content="Skráð/ur út")
+    else:
+        return redirect("/")
 
 @app.errorhandler(404)
 def pagenotfound(error):

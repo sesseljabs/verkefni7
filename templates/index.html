@@ -4,6 +4,24 @@ Heimasíða
 {% endblock %}
 
 {% block content %}
-<p>uwu</p>
-<a href="/login">login</a>
+{% if "loggedin" in session %}
+    <h2>Þú ert skráð/ur inn, {{ session["loggedin"] }}</h2>
+    <a href="/utskra">Útskráning</a>
+{% else %}
+    <a href="/login">Innskráning</a>
+    <a href="/signup">Nýskráning</a>
+{% endif %}
+
+{% if "loggedin" in session %}
+    {% if session["loggedin"] in ["admin", "sesseljabs"] %}
+        <h2>Bara fyrir ADMIN</h2>
+        <p>Þetta er bara fyrir admina. Þetta er leyniegt efni bara fyrir admin. <br>Et enim dolorum et tenetur cupiditate dolorem deserunt vel. <br>Ut enim ipsam ipsum quos. Aut delectus quisquam atque qui. <br>Qui dignissimos et consequatur itaque vero omnis amet.</p>
+    {% endif %}
+    {% for i in range(3) %}
+        <h2>efni fyrir innskráða</h2>
+        <p>Nemo quis ipsum est eos non. Excepturi et accusamus quia cumque tempora. <br>Et enim dolorum et tenetur cupiditate dolorem deserunt vel. <br>Ut enim ipsam ipsum quos. Aut delectus quisquam atque qui. <br>Qui dignissimos et consequatur itaque vero omnis amet.</p>
+    {% endfor %}
+{% else %}
+    <h1>Velkomin/n, gestur! Til að nota síðuna þarftu að skrá þig inn</h1>
+{% endif %}
 {% endblock %}

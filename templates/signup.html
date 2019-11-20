@@ -2,6 +2,9 @@
 {% block title %}Búa til notanda{% endblock %}
 
 {% block content %}
+{% if error %}
+<h2>{{ error }}</h2>
+{% endif %}
 <form method="POST" action="/subsignup">
     <fieldset>
         <legend>Búa til notanda</legend>
@@ -16,7 +19,7 @@
         <label>Lykilorð:<br>
             <input type="password" name="password" required><br>
         </label>
-        <input type="submit" value="Login">
+        <input type="submit" value="Nýskrá">
     </fieldset>
 </form>
 {% endblock %}
