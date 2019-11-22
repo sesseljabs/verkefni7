@@ -107,6 +107,21 @@ def utskra():
     else:
         return redirect("/")
 
+@app.route("/users")
+def users():
+    if "loggedin" in session:
+        if session["loggedin"] in ["admin", "sesseljabs"]:
+            with connection.cursor() as cursor:
+                getusers = "select user_name,user_email from users"
+                cursor.execute(getusers)
+                users = cursor.fetchall()
+
+            return render_template("users.html", users=users)
+        else:
+            return render_template("custom.html", content="Þú hefur ekki leyfi til að skoða þessa síðu")
+    else:
+        return render_template("custom.html", content="Þú hefur ekki leyfi til að skoða þessa síðu")
+
 @app.errorhandler(404)
 def pagenotfound(error):
     return render_template('pagenotfound.html')
